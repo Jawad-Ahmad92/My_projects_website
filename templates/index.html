@@ -28,7 +28,10 @@
       <div class="hero-image-wrapper">
         <div class="hero-image-glow"></div>
         <div class="hero-image-container">
-          <img src="myimage.png.jpg" alt="Jawad Ahmad Profile" />
+          <img
+            src="{{ url_for('static', filename='images/myimage.png.jpg') }}"
+            alt="Jawad Ahmad Profile"
+          />
         </div>
       </div>
     </div>
