@@ -1,0 +1,31 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block title %}Manage Statistics{% endblock %}
+{% block header_title %}Manage Statistics{% endblock %}
+
+{% block admin_content %}
+
+<div class="admin-card" style="max-width: 600px;">
+    <h2>Achievements Counters</h2>
+    <p style="color: var(--admin-text-muted); font-size: 0.85rem; margin-bottom: 1.5rem;">Update the values of the numerical stats displayed on the home page Achievements grid. Suffix letters like '+' or 'h' can be written directly.</p>
+    
+    <form method="POST" class="admin-form">
+        {% for stat in stats %}
+        <div class="form-group">
+            <label for="stat_{{ stat.key }}">
+                <i class="fas {{ stat.icon or 'fa-chart-line' }}" style="color: var(--admin-accent); margin-right: 0.5rem;"></i>
+                {{ stat.key }}
+            </label>
+            <input type="text" id="stat_{{ stat.key }}" name="stat_{{ stat.key }}" value="{{ stat.value }}" required placeholder="e.g. 15, 20+, 800h">
+        </div>
+        {% else %}
+        <p style="color: var(--admin-text-muted);">No statistics items found in database. Run seed script first.</p>
+        {% endfor %}
+        
+        <button type="submit" class="btn-primary" style="margin-top: 1.5rem; width: 100%; border: none; padding: 0.8rem; border-radius: 8px; cursor: pointer; background: var(--admin-success); color: #ffffff; font-size: 1rem; font-weight: 600;">
+            <i class="fas fa-save"></i> Save Stat Values
+        </button>
+    </form>
+</div>
+
+{% endblock %}

@@ -1,0 +1,242 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block title %}{{ action }} Project{% endblock %}
+{% block header_title %}{{ action }} Project{% endblock %}
+
+{% block admin_content %}
+
+<div class="admin-card">
+    <div class="admin-card-header">
+        <h2>{{ action }} Project Details</h2>
+        <a href="{{ url_for('admin_projects') }}" class="btn-primary" style="text-decoration: none; padding: 0.6rem 1.2rem; border-radius: 8px; font-weight: 600; background: var(--admin-border);"><i class="fas fa-arrow-left"></i> Back to List</a>
+    </div>
+    
+    <form method="POST" enctype="multipart/form-data" class="admin-form" style="margin-top: 1.5rem;">
+        <!-- Core Fields Row -->
+        <div class="form-row">
+            <div class="form-group">
+                <label for="name">Project Name *</label>
+                <input type="text" id="name" name="name" value="{{ project.name if project else '' }}" required placeholder="e.g. Heart Disease Prediction">
+            </div>
+            <div class="form-group">
+                <label for="category">Category *</label>
+                <select id="category" name="category" required>
+                    <option value="Machine Learning" {% if project and project.category == 'Machine Learning' %}selected{% endif %}>Machine Learning</option>
+                    <option value="Deep Learning" {% if project and project.category == 'Deep Learning' %}selected{% endif %}>Deep Learning</option>
+                    <option value="Data Analysis" {% if project and project.category == 'Data Analysis' %}selected{% endif %}>Data Analysis</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="algorithm">Algorithm Used</label>
+                <input type="text" id="algorithm" name="algorithm" value="{{ project.algorithm if project else '' }}" placeholder="e.g. Logistic Regression, CNN, XGBoost">
+            </div>
+        </div>
+
+        <div class="form-group form-group-full">
+            <label for="description">Short Description * (Displayed on Project Card)</label>
+            <textarea id="description" name="description" rows="3" required placeholder="Write a short summary of what this project accomplishes...">{{ project.description if project else '' }}</textarea>
+        </div>
+
+        <!-- Links Row -->
+        <div class="form-row">
+            <div class="form-group">
+                <label for="tags">Tags (Comma-separated)</label>
+                <input type="text" id="tags" name="tags" value="{{ project.tags if project else '' }}" placeholder="e.g. Python, Scikit-learn, classification">
+            </div>
+            <div class="form-group">
+                <label for="github_link">GitHub Link</label>
+                <input type="url" id="github_link" name="github_link" value="{{ project.github_link if project else '' }}" placeholder="https://github.com/...">
+            </div>
+            <div class="form-group">
+                <label for="demo_link">Live Demo Link</label>
+                <input type="url" id="demo_link" name="demo_link" value="{{ project.demo_link if project else '' }}" placeholder="https://...">
+            </div>
+        </div>
+
+        <!-- Performance Stats Row -->
+        <div class="form-row">
+            <div class="form-group">
+                <label for="accuracy">Accuracy Score (0.0 to 1.0)</label>
+                <input type="number" step="any" min="0" max="1" id="accuracy" name="accuracy" value="{{ project.accuracy if project else '' }}" placeholder="e.g. 0.925">
+            </div>
+            <div class="form-group">
+                <label for="f1_score">F1-Score (0.0 to 1.0)</label>
+                <input type="number" step="any" min="0" max="1" id="f1_score" name="f1_score" value="{{ project.f1_score if project else '' }}" placeholder="e.g. 0.912">
+            </div>
+            <div class="form-group">
+                <label for="status">Project Status</label>
+                <select id="status" name="status">
+                    <option value="Completed" {% if project and project.status == 'Completed' %}selected{% endif %}>Completed</option>
+                    <option value="In Progress" {% if project and project.status == 'In Progress' %}selected{% endif %}>In Progress</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="precision">Precision Score (0.0 to 1.0)</label>
+                <input type="number" step="any" min="0" max="1" id="precision" name="precision" value="{{ project.precision if project else '' }}" placeholder="e.g. 0.93">
+            </div>
+            <div class="form-group">
+                <label for="recall">Recall Score (0.0 to 1.0)</label>
+                <input type="number" step="any" min="0" max="1" id="recall" name="recall" value="{{ project.recall if project else '' }}" placeholder="e.g. 0.90">
+            </div>
+            <div class="form-group checkbox-group" style="padding-top: 1.8rem;">
+                <input type="checkbox" id="is_featured" name="is_featured" {% if project and project.is_featured %}checked{% endif %}>
+                <label for="is_featured" style="cursor: pointer;">Pin as Featured Project</label>
+            </div>
+        </div>
+
+        <!-- Case Study Sections -->
+        <h3 style="margin-top: 2rem; border-bottom: 1px solid var(--admin-border); padding-bottom: 0.5rem; color: var(--admin-accent);">Case Study Content (Markdown/Text)</h3>
+        
+        <div class="form-group form-group-full">
+            <label for="problem_statement">Problem Statement</label>
+            <textarea id="problem_statement" name="problem_statement" rows="4" placeholder="Detail the problem, target audience, and engineering goals...">{{ project.problem_statement if project else '' }}</textarea>
+        </div>
+        
+        <div class="form-group form-group-full">
+            <label for="dataset_info">Dataset Information</label>
+            <textarea id="dataset_info" name="dataset_info" rows="4" placeholder="Describe data sources, number of features, rows count, and labels schema...">{{ project.dataset_info if project else '' }}</textarea>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="data_cleaning">Data Cleaning details</label>
+                <textarea id="data_cleaning" name="data_cleaning" rows="4" placeholder="Mention handling of missing values, outliers, data conversions...">{{ project.data_cleaning if project else '' }}</textarea>
+            </div>
+            <div class="form-group">
+                <label for="feature_engineering">Feature Engineering details</label>
+                <textarea id="feature_engineering" name="feature_engineering" rows="4" placeholder="Mention scaling, normalizing, label encoding, PCA extraction...">{{ project.feature_engineering if project else '' }}</textarea>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="training_process">Training Process</label>
+                <textarea id="training_process" name="training_process" rows="4" placeholder="Explain validation splits, parameters cross-validation, models evaluated...">{{ project.training_process if project else '' }}</textarea>
+            </div>
+            <div class="form-group">
+                <label for="evaluation_metrics">Evaluation Metrics details</label>
+                <textarea id="evaluation_metrics" name="evaluation_metrics" rows="4" placeholder="Describe ROC curves AUC, classification margins, loss curves...">{{ project.evaluation_metrics if project else '' }}</textarea>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="future_improvements">Future Scope</label>
+                <textarea id="future_improvements" name="future_improvements" rows="4" placeholder="List hyperparameter tuning plans, upgrading to neural networks, scaling data size...">{{ project.future_improvements if project else '' }}</textarea>
+            </div>
+            <div class="form-group">
+                <label for="conclusion">Conclusion</label>
+                <textarea id="conclusion" name="conclusion" rows="4" placeholder="Summarize key findings, accuracy wins, and general business impact...">{{ project.conclusion if project else '' }}</textarea>
+            </div>
+        </div>
+
+        <!-- File Uploads -->
+        <h3 style="margin-top: 2rem; border-bottom: 1px solid var(--admin-border); padding-bottom: 0.5rem; color: var(--admin-accent);">File Assets & Uploads</h3>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label for="image_file">Project Cover Image (PNG, JPG)</label>
+                <input type="file" id="image_file" name="image_file">
+                {% if project and project.image_filename %}
+                <span style="font-size: 0.8rem; color: var(--admin-text-muted);">Current: {{ project.image_filename }}</span>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label for="model_file">Trained ML Model File (.joblib, .pkl)</label>
+                <input type="file" id="model_file" name="model_file">
+                {% if project and project.model_filename %}
+                <span style="font-size: 0.8rem; color: var(--admin-text-muted);">Current: {{ project.model_filename }}</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="dataset_file">Reference Dataset (.csv, .xlsx)</label>
+                <input type="file" id="dataset_file" name="dataset_file">
+                {% if project and project.dataset_filename %}
+                <span style="font-size: 0.8rem; color: var(--admin-text-muted);">Current: {{ project.dataset_filename }}</span>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label for="doc_file">Technical Report Doc (.pdf, .docx)</label>
+                <input type="file" id="doc_file" name="doc_file">
+                {% if project and project.doc_filename %}
+                <span style="font-size: 0.8rem; color: var(--admin-text-muted);">Current: {{ project.doc_filename }}</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Metric Images -->
+        <div class="form-row">
+            <div class="form-group">
+                <label for="confusion_matrix_img">Confusion Matrix Plot (PNG)</label>
+                <input type="file" id="confusion_matrix_img" name="confusion_matrix_img">
+                {% if project and project.confusion_matrix_img %}
+                <span style="font-size: 0.8rem; color: var(--admin-text-muted);">Current: {{ project.confusion_matrix_img }}</span>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label for="roc_curve_img">ROC Curve Plot (PNG)</label>
+                <input type="file" id="roc_curve_img" name="roc_curve_img">
+                {% if project and project.roc_curve_img %}
+                <span style="font-size: 0.8rem; color: var(--admin-text-muted);">Current: {{ project.roc_curve_img }}</span>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label for="feature_importance_img">Feature Importance Plot (PNG)</label>
+                <input type="file" id="feature_importance_img" name="feature_importance_img">
+                {% if project and project.feature_importance_img %}
+                <span style="font-size: 0.8rem; color: var(--admin-text-muted);">Current: {{ project.feature_importance_img }}</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Interactive Sandbox Fields -->
+        <h3 style="margin-top: 2rem; border-bottom: 1px solid var(--admin-border); padding-bottom: 0.5rem; color: var(--admin-accent);">Interactive Sandbox Configuration</h3>
+        
+        <div class="form-group checkbox-group" style="margin-bottom: 1rem;">
+            <input type="checkbox" id="is_interactive" name="is_interactive" {% if project and project.is_interactive %}checked{% endif %}>
+            <label for="is_interactive" style="cursor: pointer;">Enable Interactive Prediction Form</label>
+        </div>
+
+        <div class="form-group form-group-full">
+            <label for="inputs_schema">Inputs Schema (JSON Array)</label>
+            <textarea id="inputs_schema" name="inputs_schema" rows="8" placeholder="Define fields in same order as the trained model features list...">{{ project.inputs_schema if project else '' }}</textarea>
+            
+            <div class="schema-helper-box" style="margin-top: 1rem;">
+                <h4><i class="fas fa-info-circle"></i> Schema Format Helper:</h4>
+                <p>Provide a JSON array representing the fields. Fields will render dynamically. Supported types: <code>"number"</code>, <code>"select"</code>.</p>
+                <pre>[
+  {
+    "name": "age",
+    "label": "Age",
+    "type": "number",
+    "min": 0,
+    "max": 120,
+    "default": 45
+  },
+  {
+    "name": "sex",
+    "label": "Gender",
+    "type": "select",
+    "options": [
+      {"label": "Male", "value": 1},
+      {"label": "Female", "value": 0}
+    ],
+    "default": 1
+  }
+]</pre>
+            </div>
+        </div>
+
+        <button type="submit" class="btn-primary" style="margin-top: 1.5rem; font-size: 1.1rem; border: none; padding: 0.8rem 2rem; border-radius: 8px; cursor: pointer; background: var(--admin-success); color: #ffffff;">
+            <i class="fas fa-save"></i> Save Project Settings
+        </button>
+    </form>
+</div>
+
+{% endblock %}

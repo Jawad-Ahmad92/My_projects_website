@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO Optimization -->
+    <title>{% block title %}Jawad Ahmad | AI, ML & Data Science Portfolio{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}Professional portfolio of Jawad Ahmad, an aspiring Artificial Intelligence, Machine Learning, and Data Science Engineer. Explore projects in ML, DL, and Data Analysis with live interactive model demos.{% endblock %}">
+    <meta name="author" content="Jawad Ahmad">
+    <meta name="keywords" content="Artificial Intelligence, Machine Learning, Deep Learning, Data Science, Python, SQL, portfolio, Jawad Ahmad">
+    
+    <!-- FontAwesome & Google Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom Style Sheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+    <!-- Particle Background Canvas -->
+    <div id="particle-canvas-wrapper">
+        <canvas id="particle-canvas"></canvas>
+    </div>
+
+    <!-- Navigation Header -->
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <a href="{{ url_for('index') }}" class="logo">JAWAD AHMAD</a>
+            
+            <button class="mobile-menu-btn" id="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <div class="nav-links-wrapper">
+                <ul class="nav-links" id="nav-links">
+                    <li><a href="{% if request.path == '/' %}#home{% else %}{{ url_for('index') }}#home{% endif %}" class="active">Home</a></li>
+                    <li><a href="{% if request.path == '/' %}#about{% else %}{{ url_for('index') }}#about{% endif %}">About Me</a></li>
+                    <li><a href="{% if request.path == '/' %}#skills{% else %}{{ url_for('index') }}#skills{% endif %}">Skills</a></li>
+                    <li><a href="{% if request.path == '/' %}#projects{% else %}{{ url_for('index') }}#projects{% endif %}">Projects</a></li>
+                    <li><a href="{% if request.path == '/' %}#achievements{% else %}{{ url_for('index') }}#achievements{% endif %}">Achievements</a></li>
+                    <li><a href="{% if request.path == '/' %}#certifications{% else %}{{ url_for('index') }}#certifications{% endif %}">Certifications</a></li>
+                    <li><a href="{% if request.path == '/' %}#resume{% else %}{{ url_for('index') }}#resume{% endif %}">Resume</a></li>
+                    <li><a href="{% if request.path == '/' %}#blog{% else %}{{ url_for('index') }}#blog{% endif %}">Blog</a></li>
+                    <li><a href="{% if request.path == '/' %}#contact{% else %}{{ url_for('index') }}#contact{% endif %}">Contact</a></li>
+                    {% if current_user.is_authenticated %}
+                        <li><a href="{{ url_for('admin_dashboard') }}" style="color: var(--secondary)">Admin</a></li>
+                    {% endif %}
+                </ul>
+                
+                <!-- Theme Toggle Button -->
+                <button class="theme-toggle-btn" id="theme-toggle" aria-label="Toggle Theme">
+                    <i class="fas fa-sun"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <a href="{{ url_for('index') }}" class="logo">JAWAD AHMAD</a>
+                <ul class="footer-links">
+                    <li><a href="{% if request.path == '/' %}#home{% else %}{{ url_for('index') }}#home{% endif %}">Home</a></li>
+                    <li><a href="{% if request.path == '/' %}#about{% else %}{{ url_for('index') }}#about{% endif %}">About Me</a></li>
+                    <li><a href="{% if request.path == '/' %}#skills{% else %}{{ url_for('index') }}#skills{% endif %}">Skills</a></li>
+                    <li><a href="{% if request.path == '/' %}#projects{% else %}{{ url_for('index') }}#projects{% endif %}">Projects</a></li>
+                    <li><a href="{% if request.path == '/' %}#certifications{% else %}{{ url_for('index') }}#certifications{% endif %}">Certifications</a></li>
+                    <li><a href="{% if request.path == '/' %}#blog{% else %}{{ url_for('index') }}#blog{% endif %}">Blog</a></li>
+                </ul>
+                <div class="contact-social-icons">
+                    <a href="https://github.com/jawad" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                    <a href="https://linkedin.com/in/jawad" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                    <a href="mailto:jawad@example.com" aria-label="Email"><i class="fas fa-envelope"></i></a>
+                </div>
+            </div>
+            <p class="copyright">&copy; {{ datetime.now().year if datetime else 2026 }} Jawad Ahmad. All Rights Reserved. Crafted with Python Flask.</p>
+        </div>
+    </footer>
+
+    <!-- Back to top button -->
+    <button class="back-to-top-btn" id="back-to-top" aria-label="Back to Top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Scripts -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

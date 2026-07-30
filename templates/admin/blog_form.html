@@ -1,0 +1,56 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block title %}{{ action }} Blog Post{% endblock %}
+{% block header_title %}{{ action }} Blog Post{% endblock %}
+
+{% block admin_content %}
+
+<div class="admin-card">
+    <div class="admin-card-header">
+        <h2>{{ action }} Article Details</h2>
+        <a href="{{ url_for('admin_blogs') }}" class="btn-primary" style="text-decoration: none; padding: 0.6rem 1.2rem; border-radius: 8px; font-weight: 600; background: var(--admin-border);"><i class="fas fa-arrow-left"></i> Back to List</a>
+    </div>
+    
+    <form method="POST" enctype="multipart/form-data" class="admin-form" style="margin-top: 1.5rem;">
+        <div class="form-row">
+            <div class="form-group" style="grid-column: span 2;">
+                <label for="title">Article Title *</label>
+                <input type="text" id="title" name="title" value="{{ blog.title if blog else '' }}" required placeholder="e.g. Deep Learning Breakthroughs in 2026">
+            </div>
+            <div class="form-group">
+                <label for="category">Category</label>
+                <input type="text" id="category" name="category" value="{{ blog.category if blog else '' }}" placeholder="e.g. Deep Learning, Python">
+            </div>
+        </div>
+
+        <div class="form-group form-group-full">
+            <label for="summary">Short Summary * (Displayed on blog card)</label>
+            <textarea id="summary" name="summary" rows="2" required placeholder="Provide a brief introductory preview of the article...">{{ blog.summary if blog else '' }}</textarea>
+        </div>
+
+        <div class="form-group form-group-full">
+            <label for="content">Article Body (Supports HTML) *</label>
+            <textarea id="content" name="content" rows="12" required placeholder="Write the full article body text. You can use standard HTML tagging like <p>, <h3>, <code>, <ul>, etc.">{{ blog.content if blog else '' }}</textarea>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="tags">Tags (Comma-separated)</label>
+                <input type="text" id="tags" name="tags" value="{{ blog.tags if blog else '' }}" placeholder="e.g. AI, Neural Networks, TensorFlow">
+            </div>
+            <div class="form-group">
+                <label for="image_file">Article Cover Image</label>
+                <input type="file" id="image_file" name="image_file">
+                {% if blog and blog.image_filename %}
+                <span style="font-size: 0.8rem; color: var(--admin-text-muted);">Current: {{ blog.image_filename }}</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <button type="submit" class="btn-primary" style="margin-top: 1.5rem; border: none; padding: 0.8rem 2rem; border-radius: 8px; cursor: pointer; background: var(--admin-success); color: #ffffff; font-size: 1rem; font-weight: 600;">
+            <i class="fas fa-save"></i> Publish Article
+        </button>
+    </form>
+</div>
+
+{% endblock %}

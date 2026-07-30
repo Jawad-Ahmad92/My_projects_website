@@ -1,0 +1,75 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block title %}Contact Messages{% endblock %}
+{% block header_title %}Inbox Messages{% endblock %}
+
+{% block admin_content %}
+
+<div class="admin-card">
+    <div class="admin-card-header">
+        <h2>Inquiries Box</h2>
+        <span style="font-size: 0.9rem; color: var(--admin-text-muted);">Total Messages: <strong>{{ messages | length }}</strong></span>
+    </div>
+    
+    <div class="message-list" style="margin-top: 1.5rem;">
+        {% for msg in messages %}
+        <div class="message-item {% if not msg.is_read %}unread{% endif %}">
+            <div class="message-item-header">
+                <div>
+                    <span style="font-weight: 600; color: var(--admin-text-main);">{{ msg.name }}</span>
+                    <span style="margin: 0 0.5rem; color: var(--admin-border)">|</span>
+                    <span><i class="far fa-envelope"></i> <a href="mailto:{{ msg.email }}" style="color: var(--admin-text-muted); text-decoration: none;">{{ msg.email }}</a></span>
+                </div>
+                <span>{{ msg.date_sent.strftime('%b %d, %Y - %H:%M') }}</span>
+            </div>
+            
+            {% if msg.subject %}
+            <div style="font-size: 0.9rem; font-weight: 600; color: var(--admin-accent); margin-bottom: 0.5rem;">
+                Subject: {{ msg.subject }}
+            </div>
+            {% endif %}
+            
+            <p class="message-body">{{ msg.message }}</p>
+            
+            <div class="message-actions">
+                {% if not msg.is_read %}
+                <button class="btn-primary btn-sm mark-read-btn" data-id="{{ msg.id }}"><i class="fas fa-check"></i> Mark Read</button>
+                {% endif %}
+                <form action="{{ url_for('admin_message_delete', id=msg.id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this message?');">
+                    <button type="submit" class="btn-danger btn-sm" style="border: none; padding: 0.4rem 0.8rem; border-radius: 6px; font-weight: 600; cursor: pointer;"><i class="fas fa-trash-alt"></i> Delete</button>
+                </form>
+            </div>
+        </div>
+        {% else %}
+        <div style="text-align: center; padding: 4rem; color: var(--admin-text-muted);">
+            <i class="far fa-folder-open" style="font-size: 3rem; margin-bottom: 1rem; color: var(--admin-border)"></i>
+            <p>Your inbox is empty. No messages received yet.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.querySelectorAll('.mark-read-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+        const id = btn.getAttribute('data-id');
+        try {
+            const response = await fetch(`/admin/messages/read/${id}`, {
+                method: 'POST'
+            });
+            if (response.ok) {
+                // Update styling of card
+                const item = btn.closest('.message-item');
+                item.classList.remove('unread');
+                btn.remove(); // Remove mark read button
+            }
+        } catch (err) {
+            console.error("Mark read failed", err);
+        }
+    });
+});
+</script>
+{% endblock %}

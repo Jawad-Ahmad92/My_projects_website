@@ -1,0 +1,261 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ project.name }} | AI Case Study Detail{% endblock %}
+
+{% block extra_head %}
+<!-- Predict CSS & JS conditional bindings -->
+{% if project.is_interactive %}
+<script src="{{ url_for('static', filename='js/predict.js') }}" defer></script>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+
+<!-- Case Study Hero Header -->
+<section class="case-study-hero">
+    <div class="container">
+        <div class="case-study-meta-header">
+            <span class="project-status status-completed">{{ project.category }}</span>
+            <span style="color: var(--text-secondary)">/</span>
+            <span style="color: var(--secondary); font-weight: 600;">{{ project.algorithm or 'Algorithm' }}</span>
+        </div>
+        <h1>{{ project.name }}</h1>
+        
+        <div class="case-study-quick-metrics">
+            {% if project.accuracy %}
+            <div class="metric-pill glass-card">
+                <span class="label">Accuracy Score</span>
+                <span class="value">{{ (project.accuracy * 100) | round(1) }}%</span>
+            </div>
+            {% endif %}
+            {% if project.f1_score %}
+            <div class="metric-pill glass-card">
+                <span class="label">F1-Score</span>
+                <span class="value">{{ (project.f1_score * 100) | round(1) }}%</span>
+            </div>
+            {% endif %}
+            {% if project.precision %}
+            <div class="metric-pill glass-card">
+                <span class="label">Precision</span>
+                <span class="value">{{ (project.precision * 100) | round(1) }}%</span>
+            </div>
+            {% endif %}
+            {% if project.recall %}
+            <div class="metric-pill glass-card">
+                <span class="label">Recall</span>
+                <span class="value">{{ (project.recall * 100) | round(1) }}%</span>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Case Study Main Grid -->
+<section class="case-study-content" style="padding-top: 3rem;">
+    <div class="container">
+        <a href="{{ url_for('index') }}#projects" class="btn btn-secondary" style="margin-bottom: 2rem;">
+            <i class="fas fa-arrow-left"></i> Back to Projects
+        </a>
+        
+        <div class="case-study-grid">
+            <div class="case-study-main">
+                
+                <!-- 1. Overview & Problem Statement -->
+                <div class="case-study-section">
+                    <h2>Project Overview & Problem Statement</h2>
+                    <p>{{ project.description or 'No overview description.' }}</p>
+                    {% if project.problem_statement %}
+                        <p>{{ project.problem_statement | replace('\n', '<br>') | safe }}</p>
+                    {% endif %}
+                </div>
+                
+                <!-- 2. Dataset Information -->
+                {% if project.dataset_info %}
+                <div class="case-study-section">
+                    <h2>Dataset Information</h2>
+                    <p>{{ project.dataset_info | replace('\n', '<br>') | safe }}</p>
+                </div>
+                {% endif %}
+                
+                <!-- 3. Data Cleaning & Feature Engineering -->
+                {% if project.data_cleaning or project.feature_engineering %}
+                <div class="case-study-section">
+                    <h2>Data Preprocessing & Feature Engineering</h2>
+                    {% if project.data_cleaning %}
+                        <h4 style="margin-top: 1rem; margin-bottom: 0.5rem; color: var(--primary);">Data Cleaning:</h4>
+                        <p>{{ project.data_cleaning | replace('\n', '<br>') | safe }}</p>
+                    {% endif %}
+                    {% if project.feature_engineering %}
+                        <h4 style="margin-top: 1.5rem; margin-bottom: 0.5rem; color: var(--primary);">Feature Engineering:</h4>
+                        <p>{{ project.feature_engineering | replace('\n', '<br>') | safe }}</p>
+                    {% endif %}
+                </div>
+                {% endif %}
+                
+                <!-- 4. Model Training Process & Algorithms -->
+                {% if project.training_process %}
+                <div class="case-study-section">
+                    <h2>Model Training & Development Process</h2>
+                    <p>{{ project.training_process | replace('\n', '<br>') | safe }}</p>
+                </div>
+                {% endif %}
+                
+                <!-- 5. Evaluation Metrics & Charts -->
+                <div class="case-study-section">
+                    <h2>Evaluation Metrics & Visualizations</h2>
+                    {% if project.evaluation_metrics %}
+                        <p>{{ project.evaluation_metrics | replace('\n', '<br>') | safe }}</p>
+                    {% endif %}
+                    
+                    <!-- Visualization Charts grid -->
+                    {% if project.confusion_matrix_img or project.roc_curve_img or project.feature_importance_img %}
+                    <div class="visualization-grid">
+                        {% if project.confusion_matrix_img %}
+                        <div class="visualization-card glass-card">
+                            <img src="{{ url_for('serve_upload', filename=project.confusion_matrix_img) }}" alt="Confusion Matrix">
+                            <span>Confusion Matrix</span>
+                        </div>
+                        {% endif %}
+                        {% if project.roc_curve_img %}
+                        <div class="visualization-card glass-card">
+                            <img src="{{ url_for('serve_upload', filename=project.roc_curve_img) }}" alt="ROC Curve">
+                            <span>ROC Curve</span>
+                        </div>
+                        {% endif %}
+                        {% if project.feature_importance_img %}
+                        <div class="visualization-card glass-card">
+                            <img src="{{ url_for('serve_upload', filename=project.feature_importance_img) }}" alt="Feature Importance">
+                            <span>Feature Importance</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <!-- 6. Future Improvements & Conclusion -->
+                {% if project.future_improvements or project.conclusion %}
+                <div class="case-study-section">
+                    <h2>Future Outlook & Conclusion</h2>
+                    {% if project.future_improvements %}
+                        <h4 style="margin-top: 1rem; margin-bottom: 0.5rem; color: var(--primary);">Future Scope:</h4>
+                        <p>{{ project.future_improvements | replace('\n', '<br>') | safe }}</p>
+                    {% endif %}
+                    {% if project.conclusion %}
+                        <h4 style="margin-top: 1.5rem; margin-bottom: 0.5rem; color: var(--primary);">Conclusion:</h4>
+                        <p>{{ project.conclusion | replace('\n', '<br>') | safe }}</p>
+                    {% endif %}
+                </div>
+                {% endif %}
+                
+                <!-- 7. Interactive Prediction Panel Sandbox -->
+                {% if project.is_interactive and schema %}
+                <div class="predict-panel" id="predictor">
+                    <div class="predict-panel-header">
+                        <h2><i class="fas fa-microchip"></i> Interactive Prediction Sandbox</h2>
+                        <p>Input feature metrics to run real-time inference against the saved model weights.</p>
+                    </div>
+                    
+                    <form id="interactive-predict-form" data-slug="{{ project.slug }}">
+                        <div class="predict-form-grid">
+                            {% for field in schema %}
+                            <div class="form-group">
+                                <label for="field_{{ field.name }}">{{ field.label }} {% if field.required %}*{% endif %}</label>
+                                
+                                {% if field.type == 'select' %}
+                                <select id="field_{{ field.name }}" name="{{ field.name }}" required>
+                                    {% for option in field.options %}
+                                    <option value="{{ option.value }}" {% if option.value == field.default %}selected{% endif %}>{{ option.label }}</option>
+                                    {% endfor %}
+                                </select>
+                                {% else %}
+                                <input type="number" step="any" id="field_{{ field.name }}" name="{{ field.name }}" 
+                                       {% if field.min is defined %}min="{{ field.min }}"{% endif %}
+                                       {% if field.max is defined %}max="{{ field.max }}"{% endif %}
+                                       value="{{ field.default | default(0) }}" required>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">
+                            Execute Predictive Model <i class="fas fa-play"></i>
+                        </button>
+                    </form>
+                    
+                    <!-- Loading Box -->
+                    <div class="predict-result-loading" id="predict-loading">
+                        <div class="spinner"></div>
+                        <p>Computing mathematical model layers...</p>
+                    </div>
+                    
+                    <!-- Prediction Result Display -->
+                    <div class="predict-result-box" id="predict-result">
+                        <h3>Model Inference Output</h3>
+                        <div class="predict-result-val" id="result-value">Positive</div>
+                        
+                        <div class="probability-bar-wrapper" id="probability-wrapper">
+                            <div class="probability-labels" id="probability-labels">
+                                <span>Class 0: 45%</span>
+                                <span>Class 1: 55%</span>
+                            </div>
+                            <div class="probability-bar-outer">
+                                <div class="probability-bar-inner" id="probability-bar"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                
+            </div>
+            
+            <!-- Sidebar Metadata Card -->
+            <div class="case-study-sidebar">
+                <div class="sidebar-widget glass-card">
+                    <h3>Project Metadata</h3>
+                    <div class="sidebar-meta-list">
+                        <div class="sidebar-meta-item">
+                            <span class="label">Category</span>
+                            <span class="value">{{ project.category }}</span>
+                        </div>
+                        <div class="sidebar-meta-item">
+                            <span class="label">Algorithm</span>
+                            <span class="value">{{ project.algorithm or 'N/A' }}</span>
+                        </div>
+                        <div class="sidebar-meta-item">
+                            <span class="label">Development Status</span>
+                            <span class="value">{{ project.status }}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="sidebar-widget glass-card">
+                    <h3>Project Attachments</h3>
+                    <div class="sidebar-meta-list">
+                        {% if project.dataset_filename %}
+                        <a href="{{ url_for('serve_upload', filename=project.dataset_filename) }}" download class="btn btn-secondary" style="width: 100%;">
+                            Download Dataset CSV <i class="fas fa-file-csv"></i>
+                        </a>
+                        {% endif %}
+                        {% if project.doc_filename %}
+                        <a href="{{ url_for('serve_upload', filename=project.doc_filename) }}" download class="btn btn-secondary" style="width: 100%;">
+                            Download Technical PDF <i class="fas fa-file-pdf"></i>
+                        </a>
+                        {% endif %}
+                        {% if project.github_link %}
+                        <a href="{{ project.github_link }}" target="_blank" class="btn btn-primary" style="width: 100%;">
+                            GitHub Repository <i class="fab fa-github"></i>
+                        </a>
+                        {% endif %}
+                        {% if project.demo_link %}
+                        <a href="{{ project.demo_link }}" target="_blank" class="btn btn-secondary" style="width: 100%;">
+                            Live Demo Page <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

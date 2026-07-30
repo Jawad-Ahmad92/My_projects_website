@@ -1,0 +1,51 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block title %}Manage Blogs{% endblock %}
+{% block header_title %}Manage Blogs{% endblock %}
+
+{% block admin_content %}
+
+<div class="admin-card">
+    <div class="admin-card-header">
+        <h2>Blog Articles</h2>
+        <a href="{{ url_for('admin_blog_add') }}" class="btn-primary" style="text-decoration: none; padding: 0.6rem 1.2rem; border-radius: 8px; font-weight: 600;"><i class="fas fa-plus"></i> Add New Post</a>
+    </div>
+    
+    <div class="admin-table-wrapper">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Publish Date</th>
+                    <th>Post Title</th>
+                    <th>Category</th>
+                    <th>Tags</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for blog in blogs %}
+                <tr>
+                    <td>{{ blog.date_posted.strftime('%b %d, %Y') }}</td>
+                    <td><strong>{{ blog.title }}</strong></td>
+                    <td>{{ blog.category or 'N/A' }}</td>
+                    <td>{{ blog.tags or 'None' }}</td>
+                    <td>
+                        <div class="action-btns">
+                            <a href="{{ url_for('admin_blog_edit', id=blog.id) }}" class="btn-primary btn-sm" style="text-decoration: none;"><i class="fas fa-edit"></i> Edit</a>
+                            <form action="{{ url_for('admin_blog_delete', id=blog.id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this blog post?');">
+                                <button type="submit" class="btn-danger btn-sm" style="border: none; padding: 0.4rem 0.8rem; border-radius: 6px; font-weight: 600; cursor: pointer;"><i class="fas fa-trash-alt"></i> Delete</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" style="text-align: center; color: var(--admin-text-muted); padding: 2rem;">No articles written yet. Click 'Add New Post' to publish.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

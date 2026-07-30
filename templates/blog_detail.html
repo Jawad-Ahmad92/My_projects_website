@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ blog.title }} | AI & ML Blog{% endblock %}
+
+{% block content %}
+
+<!-- Blog Reader Hero Header -->
+<section class="blog-reader-hero">
+    <div class="container">
+        <div class="blog-reader-meta">
+            <span><i class="far fa-calendar-alt"></i> {{ blog.date_posted.strftime('%B %d, %Y') }}</span>
+            {% if blog.category %}
+            <span><i class="far fa-folder-open"></i> {{ blog.category }}</span>
+            {% endif %}
+        </div>
+        <h1>{{ blog.title }}</h1>
+        <p style="color: var(--text-secondary); max-width: 700px; margin: 0 auto; font-size: 1.1rem; line-height: 1.5;">
+            {{ blog.summary }}
+        </p>
+    </div>
+</section>
+
+<!-- Blog Content Reader Column -->
+<section class="blog-reader-content" style="padding-top: 2rem;">
+    <div class="container">
+        <a href="{{ url_for('index') }}#blog" class="btn btn-secondary" style="margin-bottom: 2rem;">
+            <i class="fas fa-arrow-left"></i> Back to Blog List
+        </a>
+        
+        <article class="blog-content-body">
+            {% if blog.image_filename %}
+            <img src="{{ url_for('serve_upload', filename=blog.image_filename) }}" alt="{{ blog.title }}" style="max-height: 400px; object-fit: cover;">
+            {% endif %}
+            
+            <!-- Safe filter to allow HTML tagging/paragraphs from form editor -->
+            {{ blog.content | replace('\n', '<br>') | safe }}
+        </article>
+    </div>
+</section>
+
+{% endblock %}

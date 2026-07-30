@@ -1,0 +1,64 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block title %}Manage Resume CV{% endblock %}
+{% block header_title %}Manage Resume CV{% endblock %}
+
+{% block admin_content %}
+
+<div style="display: grid; grid-template-columns: 0.8fr 1.2fr; gap: 2rem;">
+    <!-- Upload card -->
+    <div class="admin-card">
+        <h2>Upload New Resume</h2>
+        <p style="color: var(--admin-text-muted); font-size: 0.85rem; margin-bottom: 1.5rem;">Uploading a new resume will automatically deactivate all previous versions and set this file as active.</p>
+        
+        <form method="POST" enctype="multipart/form-data" class="admin-form">
+            <div class="form-group">
+                <label for="resume_file">Select Resume PDF *</label>
+                <input type="file" id="resume_file" name="resume_file" required accept=".pdf">
+            </div>
+            <button type="submit" class="btn-primary" style="width: 100%; border: none; padding: 0.8rem; border-radius: 8px; font-weight: 600; cursor: pointer; background: var(--admin-accent); color: #ffffff;"><i class="fas fa-upload"></i> Upload & Set Active</button>
+        </form>
+    </div>
+    
+    <!-- Uploaded resumes list -->
+    <div class="admin-card">
+        <h2>Upload History</h2>
+        
+        <div class="admin-table-wrapper" style="margin-top: 1rem;">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Upload Date</th>
+                        <th>Filename</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for resume in resumes %}
+                    <tr>
+                        <td>{{ resume.upload_date.strftime('%b %d, %Y - %H:%M') }}</td>
+                        <td>
+                            <a href="{{ url_for('serve_resume', filename=resume.filename) }}" target="_blank" style="color: var(--admin-text-main); font-weight: 500; text-decoration: none;">
+                                <i class="far fa-file-pdf" style="color: var(--admin-danger);"></i> {{ resume.filename }}
+                            </a>
+                        </td>
+                        <td>
+                            {% if resume.is_active %}
+                            <span style="color: var(--admin-success); font-weight: 600; border: 1px solid rgba(16, 185, 129, 0.2); padding: 0.2rem 0.5rem; border-radius: 12px; font-size: 0.8rem; background: rgba(16, 185, 129, 0.05);"><i class="fas fa-check-circle"></i> Active</span>
+                            {% else %}
+                            <span style="color: var(--admin-text-muted); font-size: 0.85rem;">Inactive</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="3" style="text-align: center; color: var(--admin-text-muted);">No resumes uploaded yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
